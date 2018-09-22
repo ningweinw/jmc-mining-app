@@ -5,6 +5,7 @@ var express = require('express'),
     engines = require('consolidate'),
     assert = require('assert'),
     ObjectId = require('mongodb').ObjectID,
+    url = 'mongodb://c4tssg2:uVIMgFJOLZ7nFPTCqavJakAJRwVsBvOJINWqFzpIRcY6oEuCAaa5uykPVMt1eLxnSti6cOts44GbDXcX8s4gkg%3D%3D@c4tssg2.documents.azure.com:10255/?ssl=true';
 
 app.use(express.static(__dirname + "/public"));
 
