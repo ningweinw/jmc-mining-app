@@ -26,12 +26,11 @@
   },
   "homepage": "https://github.com/chhunchha/simplemeanapp#readme",
   "dependencies": {
+    "angular-datatables": "^0.6.2",
     "assert": "^1.4.1",
-    "body-parser": "^1.15.1",
-    "consolidate": "^0.14.1",
-    "express": "^4.13.4",
-    "mongodb": "^2.1.21",
-    "mongoose": "^4.4.20",
-    "nunjucks": "^2.4.2"
+    "body-parser": "^1.18.3",
+    "consolidate": "^0.14.5",
+    "express": "^4.16.4",
+    "mongodb": "^2.2.36"
   }
 }

@@ -27,16 +27,17 @@ MongoClient.connect(process.env.MONGODB_URI || url,function(err, db){
     console.log('Successfully connected to MongoDB.');
 
     var records_collection = db.collection('records');
-
+    
     app.get('/records', function(req, res, next) {
-        // console.log("Received get /records request");
+        console.log("Received get /records request");
+        //var options = {};
+        //options["limit"] = 100;
+        //options["skip"] = 0;
+        //records_collection.find({}, options).toArray(function(err, records){
         records_collection.find({}).toArray(function(err, records){
             if(err) throw err;
 
-            if(records.length < 1) {
-                console.log("No records found.");
-            }
-
+            console.log("Number of records: " + records.length);
             // console.log(records);
             res.json(records);
         });

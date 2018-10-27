@@ -40,6 +40,24 @@
                     </td>
                 </tr>
             </table>
+            <!-- pager -->
+            <ul ng-if="ctrl.pager.pages.length" class="pagination">
+                <li ng-class="{disabled:ctrl.pager.currentPage === 1}">
+                    <a ng-click="ctrl.setPage(1)">First</a>
+                </li>
+                <li ng-class="{disabled:ctrl.pager.currentPage === 1}">
+                    <a ng-click="ctrl.setPage(ctrl.pager.currentPage - 1)">Previous</a>
+                </li>
+                <li ng-repeat="page in ctrl.pager.pages" ng-class="{active:ctrl.pager.currentPage === page}">
+                    <a ng-click="ctrl.setPage(page)">{{page}}</a>
+                </li>
+                <li ng-class="{disabled:ctrl.pager.currentPage === ctrl.pager.totalPages}">
+                    <a ng-click="ctrl.setPage(ctrl.pager.currentPage + 1)">Next</a>
+                </li>
+                <li ng-class="{disabled:ctrl.pager.currentPage === ctrl.pager.totalPages}">
+                    <a ng-click="ctrl.setPage(ctrl.pager.totalPages)">Last</a>
+                </li>
+            </ul>
         </div>
         <script src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
