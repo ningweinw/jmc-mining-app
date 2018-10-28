@@ -44,7 +44,9 @@ MongoClient.connect(process.env.MONGODB_URI || url,function(err, db){
             if(err) throw err;
             else if(reply) {
                 // cache returns a hashtable object (_id : stringified record object)
-                var records = Object.values(reply);
+                //var records = Object.values(reply);
+                // Object.values not yet supported on Azure app service, gives error
+                var records = Object.keys(reply).map((k) => reply[k]);
                 console.log("Cache hit, reply size: " + records.length);
                 // convert record string to object
                 for(var i = 0; i < records.length; i++) {
