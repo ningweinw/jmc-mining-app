@@ -29,24 +29,26 @@ app.set('views', __dirname + '/views');
 
 assert(process.env.APPSETTING_WEBSITE_SITE_NAME);
 console.log("Login for AppServiceMSI");
-let keyVaultClient = new KeyVault.KeyVaultClient(getKeyVaultCredentials());
-let url = getKeyVaultSecret(keyVaultClient, SECRET_MONGO_URL).value;
-let redisKey = getKeyVaultSecret(keyVaultClient, SECRET_REDIS).value;
+
+var url, redisKey;
+msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'}, function(err, credentials) {
+    assert.equal(null, err);
+    let client = new KeyVault.KeyVaultClient(credentials);
+    let promiseMongo = client.getSecret(KEYVAULT_URI, SECRET_MONGO_URL, "");
+    let promiseRedis = client.getSecret(KEYVAULT_URI, SECRET_REDIS, "");
+    Promise.all([promiseMongo, promiseRedis]).then(function(values) {
+        console.log(values);
+        url = values[0].value;
+        redisKey = values[1].value;
+        console.log(SECRET_MONGO_URL + "=" + url);
+        console.log(SECRET_REDIS + "=" + redisKey);
+    });
+});
 
 function errorHandler(err, req, res, next) {
     console.error(err.message);
     console.error(err.stack);
     res.status(500).render("error_template", { error: err});
-}
-
-function getKeyVaultCredentials() {
-    return msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'});
-}
-  
-function getKeyVaultSecret(client, secret) {
-    let value = client.getSecret(KEYVAULT_URI, secret, "");
-    console.log("Secret: " + secret + "=" + value);
-    return value;
 }
 
 MongoClient.connect(url, function(err, db){
