@@ -28,10 +28,12 @@
   "dependencies": {
     "angular-datatables": "^0.6.2",
     "assert": "^1.4.1",
+    "azure-keyvault": "^3.0.4",
     "body-parser": "^1.18.3",
     "consolidate": "^0.14.5",
     "express": "^4.16.4",
     "mongodb": "^2.2.36",
+    "ms-rest-azure": "^2.5.9",
     "redis": "^2.8.0"
   }
 }

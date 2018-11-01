@@ -5,11 +5,18 @@ var express = require('express'),
     engines = require('consolidate'),
     assert = require('assert'),
     ObjectId = require('mongodb').ObjectID,
-    url = 'mongodb://c4tssg2:uVIMgFJOLZ7nFPTCqavJakAJRwVsBvOJINWqFzpIRcY6oEuCAaa5uykPVMt1eLxnSti6cOts44GbDXcX8s4gkg%3D%3D@c4tssg2.documents.azure.com:10255/?ssl=true',
-    collectionName = 'records',
     redis = require("redis"),
-    redisHostName = 'c4tssg2cache.redis.cache.windows.net',
-    redisKey = '9PjAetiA3jfHheZEF6erkKcMBqpw9IEdK9c5vvqS4Xk=';
+    msRestAzure = require('ms-rest-azure'),
+    KeyVault = require('azure-keyvault');
+
+const KEYVAULT_URI = null || process.env['KEYVAULT_URI'],
+    REDIS_HOST = null || process.env['REDIS_HOST'],
+    COLLECTION_NAME = 'records',
+    SECRET_MONGO_URL = 'MongoDB-URL',
+    SECRET_REDIS = 'Redis-Key';
+
+console.log(`KEYVALUT_URI=${KEYVAULT_URI}`);
+console.log(`REDIS_HOST=${REDIS_HOST}`);
 
 app.use(express.static(__dirname + "/public"));
 
@@ -20,22 +27,38 @@ app.engine('html', engines.nunjucks);
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
 
+assert(process.env.APPSETTING_WEBSITE_SITE_NAME);
+console.log("Login for AppServiceMSI");
+let keyVaultClient = new KeyVault.KeyVaultClient(getKeyVaultCredentials());
+let url = getKeyVaultSecret(keyVaultClient, SECRET_MONGO_URL);
+let redisKey = getKeyVaultSecret(keyVaultClient, SECRET_REDIS);
+
 function errorHandler(err, req, res, next) {
     console.error(err.message);
     console.error(err.stack);
     res.status(500).render("error_template", { error: err});
 }
 
-MongoClient.connect(process.env.MONGODB_URI || url,function(err, db){
+function getKeyVaultCredentials() {
+    return msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'});
+}
+  
+function getKeyVaultSecret(client, secret) {
+    let value = client.getSecret(KEYVAULT_URI, secret, "");
+    console.log("Secret: " + secret + "=" + value);
+    return value;
+}
+
+MongoClient.connect(url, function(err, db){
     assert.equal(null, err);
     console.log('Successfully connected to MongoDB');
 
-    var records_collection = db.collection(collectionName);
-    console.log("DB collection ready for: " + collectionName);
+    var records_collection = db.collection(COLLECTION_NAME);
+    console.log("DB collection ready for: " + COLLECTION_NAME);
     
-    var cache = redis.createClient(6380, redisHostName, 
-        {auth_pass: redisKey, tls: {servername: redisHostName}});
-    console.log("Cache ready for: " + redisHostName);
+    var cache = redis.createClient(6380, REDIS_HOST, 
+        {auth_pass: redisKey, tls: {servername: REDIS_HOST}});
+    console.log("Cache ready for: " + REDIS_HOST);
 
     app.get('/records', function(req, res, next) {
         console.log("Received get /records request");
