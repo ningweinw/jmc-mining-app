@@ -30,8 +30,8 @@ app.set('views', __dirname + '/views');
 assert(process.env.APPSETTING_WEBSITE_SITE_NAME);
 console.log("Login for AppServiceMSI");
 let keyVaultClient = new KeyVault.KeyVaultClient(getKeyVaultCredentials());
-let url = getKeyVaultSecret(keyVaultClient, SECRET_MONGO_URL);
-let redisKey = getKeyVaultSecret(keyVaultClient, SECRET_REDIS);
+let url = getKeyVaultSecret(keyVaultClient, SECRET_MONGO_URL).value;
+let redisKey = getKeyVaultSecret(keyVaultClient, SECRET_REDIS).value;
 
 function errorHandler(err, req, res, next) {
     console.error(err.message);
