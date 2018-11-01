@@ -35,8 +35,8 @@ msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'}, functi
     let client = new KeyVault.KeyVaultClient(credentials);
     let promiseMongo = client.getSecret(KEYVAULT_URI, SECRET_MONGO_URL, "");
     let promiseRedis = client.getSecret(KEYVAULT_URI, SECRET_REDIS, "");
-    Promise.all([promiseMongo, promiseRedis]).then(function(values) {
-        console.log(values);
+    Promise.all([promiseMongo, promiseRedis]).then(values => {
+        //console.log(values);
         let url = values[0].value;
         let redisKey = values[1].value;
         console.log(SECRET_MONGO_URL + "=" + url);
@@ -57,7 +57,7 @@ msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'}, functi
             app.get('/records', function(req, res, next) {
                 console.log("Received get /records request");
                 
-                cache.HGETALL(collectionName, function(err, reply) {
+                cache.HGETALL(COLLECTION_NAME, function(err, reply) {
                     if(err) throw err;
                     else if(reply) {
                         // cache returns a hashtable object (_id : stringified record object)
@@ -90,7 +90,7 @@ msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'}, functi
                                 hashList[2 * i] = records[i]._id.toString();
                                 hashList[2 * i + 1] = JSON.stringify(records[i]);
                             }
-                            cache.HMSET(collectionName, hashList);
+                            cache.HMSET(COLLECTION_NAME, hashList);
                             console.log("Cache set successfully");
                         });
                     }
@@ -107,7 +107,7 @@ msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'}, functi
                     // update cache
                     var insertedId = doc.insertedIds[0];
                     var insertedRecord = doc.ops[0];
-                    cache.HSET(collectionName, insertedId.toString(), JSON.stringify(insertedRecord));
+                    cache.HSET(COLLECTION_NAME, insertedId.toString(), JSON.stringify(insertedRecord));
                 });
             });
 
@@ -120,7 +120,7 @@ msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'}, functi
                     res.json(results);
 
                     // update cache
-                    cache.HDEL(collectionName, id.toString());
+                    cache.HDEL(COLLECTION_NAME, id.toString());
                 });
             });
 
@@ -144,7 +144,7 @@ msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'}, functi
                             'name' : req.body.name,
                             'email': req.body.email,
                             'phone': req.body.phone};
-                        cache.HSET(collectionName, id.toString(), JSON.stringify(updatedRecord));
+                        cache.HSET(COLLECTION_NAME, id.toString(), JSON.stringify(updatedRecord));
                 });
             });
 
@@ -154,6 +154,8 @@ msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'}, functi
                 console.log('Express server listening on port %s.', port);
             });
         });
+    }, err => {
+        console.log(err);
     });
 });
 
