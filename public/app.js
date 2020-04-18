@@ -15,6 +15,7 @@ function AppCtrl($scope, $http) {
     vm.records = [];
     vm.allRecords = [];
     vm.pager = {};
+    vm.loginStr = '';
 
     vm.handleError = function(response) {
         console.log(response.status + " - " + response.statusText + " - " + response.data);
@@ -36,6 +37,10 @@ function AppCtrl($scope, $http) {
     vm.getAllRecords = function() {
         $http.get('/records').then(function(response){
             vm.allRecords = response.data;
+            vm.loginStr = vm.allRecords.pop().loginStr;
+            if(vm.loginStr == "Anonymous")
+                document.getElementById("logout").style.display = "none";
+            
             console.log("Records queried from DB: " + vm.allRecords.length);
             vm.setPage(1);
         }, function(response){
