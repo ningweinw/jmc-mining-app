@@ -10,7 +10,16 @@
     </head>
     <body>
         <div class="container" ng-controller="appCtrl as ctrl">
-            <h1>MEAN - Records app</h1>
+            <table style="width:100%">
+                <tr>
+                    <td>
+                        <h1>MEAN - Records app</h1>
+
+                    </td>
+                    <td align="right">{{ctrl.loginStr}}</td>
+                    <td align="right" id="logout"><a href="/.auth/logout">Sign out</a></td>
+                </tr>
+            </table>
             <table class="table">
                 <thead>
                     <tr>

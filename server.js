@@ -7,13 +7,29 @@ var express = require('express'),
     ObjectId = require('mongodb').ObjectID,
     redis = require("redis"),
     msRestAzure = require('ms-rest-azure'),
-    KeyVault = require('azure-keyvault');
+    KeyVault = require('azure-keyvault'),
+    appInsights = require('applicationinsights');
 
 const KEYVAULT_URI = null || process.env['KEYVAULT_URI'],
     REDIS_HOST = null || process.env['REDIS_HOST'],
     COLLECTION_NAME = 'records',
     SECRET_MONGO_URL = 'MongoDB-URL',
-    SECRET_REDIS = 'Redis-Key';
+    SECRET_REDIS = 'Redis-Key',
+    APIM_KEY = null || process.env['APPINSIGHTS_INSTRUMENTATIONKEY'];
+
+if(APIM_KEY) {
+    appInsights.setup(APIM_KEY)
+        .setAutoDependencyCorrelation(true)
+        .setAutoCollectRequests(true)
+        .setAutoCollectPerformance(true)
+        .setAutoCollectExceptions(true)
+        .setAutoCollectDependencies(true)
+        .setAutoCollectConsole(true)
+        .setUseDiskRetryCaching(true)
+        .start();
+}
+
+var loginStr = 'Anonymous';
 
 console.log(`KEYVALUT_URI=${KEYVAULT_URI}`);
 console.log(`REDIS_HOST=${REDIS_HOST}`);
@@ -56,7 +72,12 @@ msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'}, functi
 
             app.get('/records', function(req, res, next) {
                 console.log("Received get /records request");
-                
+                console.log(req.headers);
+                var loginName = req.header('x-ms-client-principal-name');
+                var idpName = req.header('x-ms-client-principal-idp');
+                if((loginName !== undefined) && (loginName !== null))
+                    loginStr = loginName + ' (' + idpName + ')';
+
                 cache.HGETALL(COLLECTION_NAME, function(err, reply) {
                     if(err) throw err;
                     else if(reply) {
@@ -69,6 +90,8 @@ msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'}, functi
                         for(var i = 0; i < records.length; i++) {
                             records[i] = JSON.parse(records[i]);
                         }
+                        // append the login string to the record list
+                        records.push({"loginStr": loginStr});
                         res.json(records);
                     }
                     else {
@@ -82,7 +105,6 @@ msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'}, functi
                     
                             console.log("Number of records from DB: " + records.length);
                             //console.log(records);
-                            res.json(records);
 
                             // write to cache as hashtable, key is _id, value is the record object
                             var i, hashList = [];
@@ -92,6 +114,10 @@ msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'}, functi
                             }
                             cache.HMSET(COLLECTION_NAME, hashList);
                             console.log("Cache set successfully");
+
+                            // append the login string to the record list
+                            records.push({"loginStr": loginStr});
+                            res.json(records);
                         });
                     }
                 });
