@@ -46,9 +46,9 @@ app.set('views', __dirname + '/views');
 assert(process.env.APPSETTING_WEBSITE_SITE_NAME);
 console.log("Login for AppServiceMSI");
 
-msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'}, function(err, credentials) {
+msRestAzure.loginWithAppServiceMSI({resource: 'https://vault.azure.net'}, function(err, token) {
     assert.equal(null, err);
-    let client = new KeyVault.KeyVaultClient(credentials);
+    let client = new KeyVault.KeyVaultClient(token);
     let promiseMongo = client.getSecret(KEYVAULT_URI, SECRET_MONGO_URL, "");
     let promiseRedis = client.getSecret(KEYVAULT_URI, SECRET_REDIS, "");
     Promise.all([promiseMongo, promiseRedis]).then(values => {
