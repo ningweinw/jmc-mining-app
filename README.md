@@ -1,3 +1,5 @@
+Update made on 21-Nov
+
 # Simple Mean App
 Simple application to Add, Update, Remove, Search records using MEAN stack
 Records generated based on field array defined in app.js list.
