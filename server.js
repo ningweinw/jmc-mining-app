@@ -1,5 +1,3 @@
-// new code added for feature-1
-
 var express = require('express'),
     app = express(),
     bodyParser = require('body-parser'),
