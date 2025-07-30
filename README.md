@@ -33,4 +33,4 @@ app.put('/records/:id', function(req, res, next){
 
 This is for simple seed mean app at it basic level for learning.
 
-Updated on 2-June for feature-1 by developer A
+Updated on 2-June for feature-1 by NW
