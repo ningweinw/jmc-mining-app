@@ -31,6 +31,6 @@ app.put('/records/:id', function(req, res, next){
 });
 ```
 
-Updated for feature-2 by David
+Updated for feature-1 and feature-2
 
 
