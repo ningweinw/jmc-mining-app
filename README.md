@@ -31,5 +31,5 @@ app.put('/records/:id', function(req, res, next){
 });
 ```
 
-Updated for two features
+Updated for feature-1 by Ning
 
