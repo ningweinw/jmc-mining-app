@@ -31,6 +31,7 @@ app.put('/records/:id', function(req, res, next){
 });
 ```
 
-Updated for new feature on web UI by Ning
+Updated for new feature on web UI by Ning, and DB by David
+
 
 
