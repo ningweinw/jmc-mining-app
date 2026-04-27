@@ -1,4 +1,4 @@
-// print a console log to show the server is starting
+// server starting
 console.log("Starting server...");
 
 var express = require('express'),
