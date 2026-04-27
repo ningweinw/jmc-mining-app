@@ -1,3 +1,6 @@
+// print a console log to show the server is starting
+console.log("Starting server...");
+
 var express = require('express'),
     app = express(),
     bodyParser = require('body-parser'),
