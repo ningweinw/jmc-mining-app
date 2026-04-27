@@ -1,6 +1,3 @@
-// server starting
-console.log("Starting server...");
-
 var express = require('express'),
     app = express(),
     bodyParser = require('body-parser'),
