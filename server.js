@@ -1,4 +1,4 @@
-// comments added by another developer
+console.log("Starting app...");
 
 var express = require('express'),
     app = express(),
