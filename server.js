@@ -1,4 +1,3 @@
-// add a console log to indicate app is starting
 console.log("Starting app...");
 
 var express = require('express'),
