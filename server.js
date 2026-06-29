@@ -1,4 +1,4 @@
-console.log("Starting web server ...");
+console.log("feature 1");
 
 var express = require('express'),
     app = express(),
